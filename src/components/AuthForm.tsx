@@ -1,8 +1,13 @@
+// Giriş / Kayıt formunu içerir.
+
 "use client";
 
 import { useState } from "react";
 import { auth } from "@/lib/firebase";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 export default function AuthForm() {
@@ -26,40 +31,62 @@ export default function AuthForm() {
   };
 
   return (
-    <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
-      <h2 className="text-2xl font-bold mb-4">
-        {isLogin ? "Login" : "Sign Up"}
-      </h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+    <div className="w-full">
+      {/* Tab buttons */}
+      <div className="flex mb-6 border-b">
+        <button
+          className={`flex-1 py-2 text-center font-medium ${
+            isLogin
+              ? "border-b-2 border-pink-400 text-pink-500"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+          onClick={() => setIsLogin(true)}
+        >
+          Giriş Yap
+        </button>
+        <button
+          className={`flex-1 py-2 text-center font-medium ${
+            !isLogin
+              ? "border-b-2 border-pink-400 text-pink-500"
+              : "text-gray-500 hover:text-gray-700"
+          }`}
+          onClick={() => setIsLogin(false)}
+        >
+          Hesap Oluştur
+        </button>
+      </div>
+
+      {/* Form */}
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input
           type="email"
           placeholder="Email"
-          className="border p-2 rounded"
+          className="border rounded-lg p-3 focus:ring-2 focus:ring-pink-300 outline-none"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <input
           type="password"
-          placeholder="Password"
-          className="border p-2 rounded"
+          placeholder="Şifre"
+          className="border rounded-lg p-3 focus:ring-2 focus:ring-pink-300 outline-none"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+          className="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 text-gray-500 py-3 rounded-lg font-semibold hover:bg-gradient-to-l transition"
         >
-          {isLogin ? "Login" : "Sign Up"}
+          {isLogin ? "Giriş Yap" : "Hesap Oluştur"}
         </button>
       </form>
-      <p
-        className="text-sm text-gray-600 mt-4 cursor-pointer hover:underline"
-        onClick={() => setIsLogin(!isLogin)}
-      >
-        {isLogin
-          ? "Don't have an account? Sign Up"
-          : "Already have an account? Login"}
-      </p>
+
+      {isLogin && (
+        <p className="text-sm text-right mt-3 text-gray-500 hover:text-gray-700 cursor-pointer">
+          Şifreni mi unuttun?
+        </p>
+      )}
     </div>
   );
 }

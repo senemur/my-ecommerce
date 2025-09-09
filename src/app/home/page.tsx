@@ -3,22 +3,21 @@
 import { useEffect, useState } from "react";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { useRouter } from "next/navigation";
+
+
 
 export default function HomePage() {
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [user, setUser] = useState<null | any>(null);
+  
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        router.push("/login");
-      } else {
-        setLoading(false);
-      }
+     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser); // login olmuş kullanıcı veya null
+      setLoading(false);
     });
     return () => unsubscribe();
-  }, [router]);
+  }, []);
 
   if (loading) return <p className="text-center mt-20">Loading...</p>;
 
