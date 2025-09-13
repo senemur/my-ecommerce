@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import FeatureCard from "./FeatureCard";
-import { ShoppingBagIcon, ShieldCheckIcon, TruckIcon } from "./icons";
+import { ShoppingBagIcon, ShieldCheckIcon, TruckIcon } from "@heroicons/react/24/outline";
 import { useModal } from "@/context/ModalContext";
 
 export default function OnboardingHero() {

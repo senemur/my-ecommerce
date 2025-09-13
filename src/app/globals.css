@@ -40,6 +40,15 @@ body {
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.25s ease-out;
+  animation: fadeIn 0.25s ease-out forwards;
 }
 
+/* kullanıcı yorumları slider çubuğunu gizlemek için */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
