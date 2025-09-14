@@ -14,7 +14,12 @@ export default function Header() {
   const { openModal } = useModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const categories = ["Elektronik", "Moda", "Ev & Yaşam", "Telefon & Aksesuar"];
+  const categories = [
+  { name: "Elektronik", path: "/elektronik" },
+  { name: "Moda", path: "/moda" },          // ✅ yeni sayfa
+  { name: "Ev & Yaşam", path: "/ev-yasam" },
+  { name: "Telefon & Aksesuar", path: "/telefon-aksesuar" },
+];
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
@@ -59,12 +64,12 @@ export default function Header() {
             >
               <ul className="space-y-2">
                 {categories.map((cat) => (
-                  <li key={cat}>
+                  <li key={cat.name}>
                     <Link
-                      href="#"
+                      href={cat.path}
                       className="block px-3 py-2 rounded-md text-gray-700 hover:bg-gray-100 transition"
                     >
-                      {cat}
+                      {cat.name}
                     </Link>
                   </li>
                 ))}
@@ -118,11 +123,11 @@ export default function Header() {
               <div className="mt-2 flex flex-col gap-1 pl-4">
                 {categories.map((cat) => (
                   <Link
-                    key={cat}
-                    href="#"
+                    key={cat.name}
+                    href={cat.path}
                     className="py-1 hover:text-pink-500 transition"
                   >
-                    {cat}
+                    {cat.name}
                   </Link>
                 ))}
               </div>
