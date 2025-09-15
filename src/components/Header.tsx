@@ -9,6 +9,7 @@ import {
   Bars3Icon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import GradientButton from "./GradientButton";
 
 export default function Header() {
   const { openModal } = useModal();
@@ -37,7 +38,7 @@ export default function Header() {
 
         {/* Masaüstü Menü */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="#" className="hover:text-pink-500 transition">
+          <Link href="/" className="hover:text-pink-500 transition">
             Anasayfa
           </Link>
 
@@ -86,12 +87,12 @@ export default function Header() {
         </nav>
 
         {/* Login Butonu */}
-        <button
+        <GradientButton
           onClick={openModal}
-          className="hidden md:inline-block px-4 py-2 rounded-lg bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 text-gray-800 font-medium hover:bg-gradient-to-l transition"
+          className="hidden md:inline-block"
         >
           Login
-        </button>
+        </GradientButton>
 
         {/* Mobil Menü Toggle */}
         <button

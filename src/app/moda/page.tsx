@@ -1,24 +1,27 @@
+"use client";
 import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useState } from "react";
+import GradientButton from "@/components/GradientButton";
 
 const products = [
   {
     id: 1,
     name: "Oversize T-Shirt",
-    price: 249.9,
+    price: 349.9,
     image: "/tshirt.jpg",
   },
   {
     id: 2,
     name: "Yüksek Bel Jean",
-    price: 499.0,
+    price: 799.0,
     image: "/tshirt.jpg",
   },
   {
     id: 3,
     name: "Sneaker Ayakkabı",
-    price: 799.0,
+    price: 1299.0,
     image: "/tshirt.jpg",
   },
   {
@@ -29,70 +32,116 @@ const products = [
   },
     {
     id: 5,
-    name: "Deri Omuz Çantası",
-    price: 699.0,
+    name: "Bisiklet Yaka Sweatshirt",
+    price: 899.0,
     image: "/tshirt.jpg",
   },
     {
     id: 6,
-    name: "Deri Omuz Çantası",
-    price: 699.0,
+    name: "Dokum Elbise",
+    price: 599.0,
     image: "/tshirt.jpg",
   },
     {
     id: 7,
-    name: "Deri Omuz Çantası",
+    name: "Mom High Jean",
     price: 699.0,
     image: "/tshirt.jpg",
   },
     {
     id: 8,
-    name: "Deri Omuz Çantası",
-    price: 699.0,
+    name: "Uzun Kollu Gömlek",
+    price: 499.0,
     image: "/tshirt.jpg",
   },
 ];
 
 export default function ModaPage() {
+  const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
+  const [minPrice, setMinPrice] = useState<number | "">("");
+  const [maxPrice, setMaxPrice] = useState<number | "">("");
+
+  // 🔎 Fiyat filtresi
+  const filtered = products.filter((p) => {
+    const aboveMin = minPrice === "" || p.price >= minPrice;
+    const belowMax = maxPrice === "" || p.price <= maxPrice;
+    return aboveMin && belowMax;
+  });
+
+  // 🔢 Sıralama
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortOrder === "price-asc") return a.price - b.price;
+    if (sortOrder === "price-desc") return b.price - a.price;
+    return 0;
+  });
+
   return (
     <>
-    <Header />
-    <section className="max-w-7xl mx-auto px-6 py-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">Moda Koleksiyonu</h1>
+      <Header />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-        {products.map((p) => (
-          <div
-            key={p.id}
-            className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden border border-gray-100 flex flex-col"
-          >
-            {/* Ürün Görseli */}
-            <div className="relative w-full h-56">
-              <Image
-                src={p.image}
-                alt={p.name}
-                fill
-                className="object-cover"
-                sizes="(max-width:768px) 100vw, 25vw"
-              />
-            </div>
+      <main className="max-w-7xl mx-auto px-4 py-10 bg-gray-50">
+        <h1 className="text-3xl font-bold mb-6">Moda</h1>
 
-            {/* Ürün Bilgisi */}
-            <div className="p-4 flex-1 flex flex-col">
-              <h2 className="font-semibold text-lg">{p.name}</h2>
-              <p className="text-gray-600 mt-1 mb-4">{p.price.toFixed(2)} TL</p>
-              <button
-                className="mt-auto inline-flex items-center justify-center px-4 py-2 rounded-lg bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 text-gray-800 font-medium hover:opacity-90 transition"
-              >
-                Sepete Ekle
-              </button>
-            </div>
+        {/* ---- Filtre & Sıralama Kontrolleri ---- */}
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+          {/* Fiyat aralığı */}
+          <div className="flex items-center gap-3">
+            <input
+              type="number"
+              placeholder="Min ₺"
+              value={minPrice}
+              onChange={(e) => setMinPrice(e.target.value ? Number(e.target.value) : "")}
+              className="border rounded-md p-2 w-24"
+            />
+            <span>-</span>
+            <input
+              type="number"
+              placeholder="Max ₺"
+              value={maxPrice}
+              onChange={(e) => setMaxPrice(e.target.value ? Number(e.target.value) : "")}
+              className="border rounded-md p-2 w-24"
+            />
           </div>
-        ))}
-      </div>
-    </section>
 
-    <Footer />
+          {/* Sıralama */}
+          <select
+            value={sortOrder}
+            onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
+            className="border rounded-md p-2 w-48"
+          >
+            <option value="default">Varsayılan</option>
+            <option value="price-asc">Fiyat: Artan</option>
+            <option value="price-desc">Fiyat: Azalan</option>
+          </select>
+        </div>
+
+        {/* ---- Ürün Grid ---- */}
+        {sorted.length === 0 ? (
+          <p className="text-gray-600">Seçili aralıkta ürün bulunamadı.</p>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {sorted.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-64 w-full object-cover rounded-md mb-4"
+                />
+                <h3 className="font-semibold text-lg">{product.name}</h3>
+                <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
+                <GradientButton onClick={() => console.log("Başka yerde!")} className="mt-4">
+  Sepete Ekle
+</GradientButton>
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+
+      <Footer />
     </>
   );
 }

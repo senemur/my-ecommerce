@@ -9,6 +9,7 @@ import {
   TruckIcon,
 } from "@heroicons/react/24/outline";
 import { useModal } from "@/context/ModalContext";
+import GradientButton from "./GradientButton";
 
 export default function OnboardingHero() {
   const router = useRouter();
@@ -47,14 +48,12 @@ export default function OnboardingHero() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
-            <button
+            <GradientButton
               onClick={openModal}
-              className="inline-flex items-center justify-center px-7 py-3 rounded-xl
-                         bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200
-                         text-gray-800 font-medium hover:scale-105 transition-transform"
+              className=""
             >
               Hemen Başla
-            </button>
+            </GradientButton>
             <button
               onClick={() => router.push("/home")}
               className="inline-flex items-center justify-center px-7 py-3 rounded-xl

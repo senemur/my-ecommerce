@@ -2,6 +2,7 @@
 "use client";
 
 import { EnvelopeIcon, GlobeAltIcon } from "@heroicons/react/24/outline";
+import GradientButton from "./GradientButton";
 
 export default function Footer() {
   return (
@@ -57,9 +58,12 @@ export default function Footer() {
                 placeholder="Email adresiniz"
                 className="flex-1 px-3 py-2 rounded-lg text-gray-900 focus:outline-none"
               />
-              <button className="px-8 py-2 rounded-lg bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 text-white font-medium hover:bg-gradient-to-l transition absolute">
-                Abone Ol
-              </button>
+              <GradientButton
+        onClick={() => alert("Footer butonuna tıklandı!")}
+        className="absolute"
+      >
+        Abone Ol
+      </GradientButton>
             </form>
           </div>
         </div>
