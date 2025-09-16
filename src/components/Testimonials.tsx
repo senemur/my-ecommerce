@@ -1,5 +1,6 @@
 // components/Testimonials.tsx
 "use client";
+import { UserIcon } from "@heroicons/react/24/outline";
 
 export default function Testimonials() {
   const testimonials = [
@@ -7,32 +8,26 @@ export default function Testimonials() {
       name: "Ayşe K.",
       comment:
         "Uygulama sayesinde alışverişim çok daha keyifli hale geldi, tavsiye ederim!",
-      avatar: "/avatars/user1.jpg",
     },
     {
       name: "Mehmet T.",
       comment: "Ürün çeşitliliği ve hız harika. Tekrar alışveriş yapacağım.",
-      avatar: "/avatars/user2.jpg",
     },
     {
       name: "Selin D.",
       comment: "Kullanımı çok kolay ve müşteri desteği çok hızlıydı.",
-      avatar: "/avatars/user3.jpg",
     },
     {
-      name: "Emre A.",
-      comment: "İndirimler ve kampanyalar harika! Her zaman alışveriş yapıyorum.",
-      avatar: "/avatars/user4.jpg",
+      name: "Duygu K.",
+      comment: "Harika bir sayfa.",
     },
     {
-      name: "Emre A.",
-      comment: "İndirimler ve kampanyalar harika! Her zaman alışveriş yapıyorum.",
-      avatar: "/avatars/user4.jpg",
+      name: "Emir S.",
+      comment: "Bu siteye bayılıyorum. Çok iyi tasarlanmış.",
     },
     {
-      name: "Emre A.",
-      comment: "İndirimler ve kampanyalar harika! Her zaman alışveriş yapıyorum.",
-      avatar: "/avatars/user4.jpg",
+      name: "Ragıp G.",
+      comment: "Kullanımı oldukça kolay ve ürünler kaliteli.",
     },
   ];
 
@@ -54,11 +49,10 @@ export default function Testimonials() {
             className="flex-shrink-0 w-80 md:w-96 bg-white rounded-xl shadow-lg p-6 border border-gray-200"
           >
             <div className="flex items-center gap-4 mb-4">
-              <img
-                src={t.avatar}
-                alt={t.name}
-                className="w-12 h-12 rounded-full object-cover"
-              />
+              {/* Avatar yerine UserIcon */}
+              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
+                <UserIcon className="w-6 h-6 text-gray-500" />
+              </div>
               <h3 className="font-semibold text-lg">{t.name}</h3>
             </div>
             <p className="text-gray-700 leading-relaxed">{t.comment}</p>

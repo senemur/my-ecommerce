@@ -1,3 +1,5 @@
+// map: bir array metodudurBir dizinin her elemanı üzerinde sırayla işlem yapar ve sonuçları yeni bir dizi olarak döndürür.
+
 "use client";
 import Image from "next/image";
 import Header from "@/components/Header";
@@ -38,7 +40,7 @@ const products = [
   },
     {
     id: 6,
-    name: "Dokum Elbise",
+    name: "Dokuma Elbise",
     price: 599.0,
     image: "/tshirt.jpg",
   },
@@ -79,7 +81,7 @@ export default function ModaPage() {
     <>
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 py-10 bg-gray-50">
+      <main className="max-w-[1600px] mx-auto px-4 py-10 bg-gray-50">
         <h1 className="text-3xl font-bold mb-6">Moda</h1>
 
         {/* ---- Filtre & Sıralama Kontrolleri ---- */}
