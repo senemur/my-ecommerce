@@ -1,35 +1,49 @@
-// components/Header.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useModal } from "@/context/ModalContext";
 import {
   ChevronDownIcon,
   Bars3Icon,
   XMarkIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import GradientButton from "./GradientButton";
+import { auth } from "@/lib/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
 
 export default function Header() {
   const { openModal } = useModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsub();
+  }, []);
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    setProfileOpen(false);
+  };
 
   const categories = [
-  { name: "Elektronik", path: "/elektronik" },
-  { name: "Moda", path: "/moda" },          // ✅ yeni sayfa
-  { name: "Ev & Yaşam", path: "/ev-yasam" },
-  { name: "Telefon & Aksesuar", path: "/telefon-aksesuar" },
-];
+    { name: "Elektronik", path: "/elektronik" },
+    { name: "Moda", path: "/moda" },
+    { name: "Ev & Yaşam", path: "/ev-yasam" },
+    { name: "Telefon & Aksesuar", path: "/telefon-aksesuar" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 bg-white shadow-md">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+
         {/* Logo */}
-        <Link
-          href="/"
-          className="text-xl font-extrabold tracking-tight text-gray-700"
-        >
+        <Link href="/" className="text-xl font-extrabold tracking-tight text-gray-700">
           Senem's
           <span className="bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 inline-block text-transparent bg-clip-text">
             Shop
@@ -38,30 +52,18 @@ export default function Header() {
 
         {/* Masaüstü Menü */}
         <nav className="hidden md:flex items-center gap-8">
-          <Link href="/" className="hover:text-pink-500 transition">
-            Anasayfa
-          </Link>
+          <Link href="/" className="hover:text-pink-500 transition">Anasayfa</Link>
 
-          {/* Dropdown container - group relative */}
+          {/* Dropdown kategoriler */}
           <div className="relative group">
-            {/* Tetikleyici */}
-            <button
-              className="flex items-center gap-1 hover:text-pink-500 transition"
-            >
+            <button className="flex items-center gap-1 hover:text-pink-500 transition">
               Kategoriler
               <ChevronDownIcon className="w-4 h-4" />
             </button>
-
-            {/* Açılır Menü */}
             <div
-              className="
-                invisible opacity-0
-                group-hover:visible group-hover:opacity-100
-                absolute left-0 top-full mt-2
-                w-48 bg-white rounded-xl shadow-lg p-3
-                transition-all duration-200
-                z-50
-              "
+              className="invisible opacity-0 group-hover:visible group-hover:opacity-100
+                         absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg p-3
+                         transition-all duration-200 z-50"
             >
               <ul className="space-y-2">
                 {categories.map((cat) => (
@@ -78,32 +80,90 @@ export default function Header() {
             </div>
           </div>
 
-          <Link href="#" className="hover:text-pink-500 transition">
-            Kampanyalar
-          </Link>
-          <Link href="#" className="hover:text-pink-500 transition">
-            Hakkımızda
-          </Link>
+          <Link href="#" className="hover:text-pink-500 transition">Kampanyalar</Link>
+          <Link href="#" className="hover:text-pink-500 transition">Hakkımızda</Link>
         </nav>
 
-        {/* Login Butonu */}
-        <GradientButton
-          onClick={openModal}
-          className="hidden md:inline-block"
-        >
-          Login
-        </GradientButton>
+        {/* Sağ taraf: Login / Profil */}
+        {user ? (
+          <div className="relative">
+            <button
+              onClick={() => setProfileOpen(!profileOpen)}
+              className="flex items-center gap-2 rounded-full focus:outline-none"
+            >
+              <UserCircleIcon className="w-9 h-9 text-gray-600 hover:text-pink-300 transition" />
+              <ChevronDownIcon
+                className={`w-4 h-4 text-gray-500 transition-transform ${
+                  profileOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
 
-        {/* Mobil Menü Toggle */}
+            {profileOpen && (
+              <div
+                className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg 
+                           overflow-hidden z-50"
+              >
+                <div className="px-4 py-3 border-b">
+                  <p className="text-sm text-gray-700 font-medium">
+                    {user.email}
+                  </p>
+                </div>
+                <ul className="py-1 text-gray-700">
+                  <li>
+                    <Link
+                      href="/orders"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Siparişler
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/returns"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      İadeler
+                    </Link>
+                  </li>
+                  <li>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 hover:bg-gray-100 transition"
+                      onClick={() => setProfileOpen(false)}
+                    >
+                      Profil Ayarları
+                    </Link>
+                  </li>
+                  <li>
+                    <button
+                      onClick={handleLogout}
+                      className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
+                    >
+                      Çıkış Yap
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        ) : (
+          <GradientButton
+            onClick={openModal}
+            className="hidden md:inline-block"
+          >
+            Login
+          </GradientButton>
+        )}
+
+        {/* Mobil Menü butonu */}
         <button
           className="md:hidden ml-4 text-gray-700"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
-          {mobileMenuOpen ? (
-            <XMarkIcon className="w-6 h-6" />
-          ) : (
-            <Bars3Icon className="w-6 h-6" />
-          )}
+          {mobileMenuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
         </button>
       </div>
 
@@ -111,42 +171,28 @@ export default function Header() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white border-t shadow-md">
           <nav className="flex flex-col gap-2 px-6 py-4">
-            <Link href="#" className="hover:text-pink-500 transition">
-              Anasayfa
-            </Link>
-
-            {/* Basit açılır */}
-            <details>
-              <summary className="flex justify-between items-center cursor-pointer hover:text-pink-500 transition list-none">
-                Kategoriler
-                <ChevronDownIcon className="w-4 h-4" />
-              </summary>
-              <div className="mt-2 flex flex-col gap-1 pl-4">
-                {categories.map((cat) => (
-                  <Link
-                    key={cat.name}
-                    href={cat.path}
-                    className="py-1 hover:text-pink-500 transition"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
-              </div>
-            </details>
-
-            <Link href="#" className="hover:text-pink-500 transition">
-              Kampanyalar
-            </Link>
-            <Link href="#" className="hover:text-pink-500 transition">
-              Hakkımızda
-            </Link>
-
-            <button
-              onClick={openModal}
-              className="mt-2 px-5 py-2 rounded-lg bg-pink-300 text-white font-medium hover:bg-pink-400 transition"
-            >
-              Giriş Yap / Kayıt Ol
-            </button>
+            <Link href="/" className="hover:text-pink-500 transition">Anasayfa</Link>
+            {/* Kategori listesi vb. */}
+            {user ? (
+              <>
+                <Link href="/orders" className="hover:text-pink-500 transition">Siparişler</Link>
+                <Link href="/returns" className="hover:text-pink-500 transition">İadeler</Link>
+                <Link href="/profile" className="hover:text-pink-500 transition">Profil Ayarları</Link>
+                <button
+                  onClick={handleLogout}
+                  className="mt-2 px-5 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"
+                >
+                  Çıkış Yap
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={openModal}
+                className="mt-2 px-5 py-2 rounded-lg bg-pink-300 text-white font-medium hover:bg-pink-400 transition"
+              >
+                Giriş Yap / Kayıt Ol
+              </button>
+            )}
           </nav>
         </div>
       )}

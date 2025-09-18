@@ -9,12 +9,14 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import { useModal } from "@/context/ModalContext"; // Eğer modal kapatmak istersen
 
 export default function AuthForm() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
+  const { closeModal } = useModal();                 // Modal kapatma fonksiyonu
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +26,9 @@ export default function AuthForm() {
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
       }
-      router.push("/home");
+      // Giriş / kayıt başarılı → modalı kapat sonra anasayfaya yönlendir
+      closeModal();
+      router.push("/");
     } catch (err: any) {
       alert(err.message);
     }
