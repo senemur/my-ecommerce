@@ -1,76 +1,49 @@
-// map: bir array metodudurBir dizinin her elemanı üzerinde sırayla işlem yapar ve sonuçları yeni bir dizi olarak döndürür.
 
 "use client";
-import Image from "next/image";
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useState } from "react";
 import GradientButton from "@/components/GradientButton";
+import { useEffect, useState } from "react";
 
-const products = [
-  {
-    id: 1,
-    name: "Oversize T-Shirt",
-    price: 349.9,
-    image: "/tshirt.jpg",
-  },
-  {
-    id: 2,
-    name: "Yüksek Bel Jean",
-    price: 799.0,
-    image: "/tshirt.jpg",
-  },
-  {
-    id: 3,
-    name: "Sneaker Ayakkabı",
-    price: 1299.0,
-    image: "/tshirt.jpg",
-  },
-  {
-    id: 4,
-    name: "Deri Omuz Çantası",
-    price: 699.0,
-    image: "/tshirt.jpg",
-  },
-    {
-    id: 5,
-    name: "Bisiklet Yaka Sweatshirt",
-    price: 899.0,
-    image: "/tshirt.jpg",
-  },
-    {
-    id: 6,
-    name: "Dokuma Elbise",
-    price: 599.0,
-    image: "/tshirt.jpg",
-  },
-    {
-    id: 7,
-    name: "Mom High Jean",
-    price: 699.0,
-    image: "/tshirt.jpg",
-  },
-    {
-    id: 8,
-    name: "Uzun Kollu Gömlek",
-    price: 499.0,
-    image: "/tshirt.jpg",
-  },
-];
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  image: string;
+};
 
 export default function ModaPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
   const [minPrice, setMinPrice] = useState<number | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
 
-  // 🔎 Fiyat filtresi
+  // Backend’den verileri çek
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("http://localhost:4000/api/products");
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Ürünler alınamadı:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  // Fiyat filtresi
   const filtered = products.filter((p) => {
     const aboveMin = minPrice === "" || p.price >= minPrice;
     const belowMax = maxPrice === "" || p.price <= maxPrice;
     return aboveMin && belowMax;
   });
 
-  // 🔢 Sıralama
+  // Sıralama
   const sorted = [...filtered].sort((a, b) => {
     if (sortOrder === "price-asc") return a.price - b.price;
     if (sortOrder === "price-desc") return b.price - a.price;
@@ -84,9 +57,8 @@ export default function ModaPage() {
       <main className="max-w-[1600px] mx-auto px-4 py-10 bg-gray-50">
         <h1 className="text-3xl font-bold mb-6">Moda</h1>
 
-        {/* ---- Filtre & Sıralama Kontrolleri ---- */}
+        {/* ---- Filtre & Sıralama ---- */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
-          {/* Fiyat aralığı */}
           <div className="flex items-center gap-3">
             <input
               type="number"
@@ -105,7 +77,6 @@ export default function ModaPage() {
             />
           </div>
 
-          {/* Sıralama */}
           <select
             value={sortOrder}
             onChange={(e) => setSortOrder(e.target.value as typeof sortOrder)}
@@ -118,7 +89,9 @@ export default function ModaPage() {
         </div>
 
         {/* ---- Ürün Grid ---- */}
-        {sorted.length === 0 ? (
+        {loading ? (
+          <p className="text-gray-600">Yükleniyor…</p>
+        ) : sorted.length === 0 ? (
           <p className="text-gray-600">Seçili aralıkta ürün bulunamadı.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -134,15 +107,14 @@ export default function ModaPage() {
                 />
                 <h3 className="font-semibold text-lg">{product.name}</h3>
                 <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
-                <GradientButton onClick={() => console.log("Başka yerde!")} className="mt-4">
-  Sepete Ekle
-</GradientButton>
+                <GradientButton className="mt-4">
+                  Sepete Ekle
+                </GradientButton>
               </div>
             ))}
           </div>
         )}
       </main>
-
       <Footer />
     </>
   );
