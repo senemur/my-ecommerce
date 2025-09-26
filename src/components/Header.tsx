@@ -8,16 +8,19 @@ import {
   Bars3Icon,
   XMarkIcon,
   UserCircleIcon,
+  ShoppingCartIcon
 } from "@heroicons/react/24/outline";
 import GradientButton from "./GradientButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
+import { useCart } from "@/context/CartContext";
 
 export default function Header() {
   const { openModal } = useModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [profileOpen, setProfileOpen] = useState(false);
+  const { items } = useCart();
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (currentUser) => {
@@ -82,9 +85,12 @@ export default function Header() {
 
           <Link href="#" className="hover:text-pink-500 transition">Kampanyalar</Link>
           <Link href="#" className="hover:text-pink-500 transition">Hakkımızda</Link>
+
         </nav>
 
-        {/* Sağ taraf: Login / Profil */}
+
+        {/* Sağ taraf: Login / Profil  ve sepet*/}
+        <div className="flex items-center gap-4">
         {user ? (
           <div className="relative">
             <button
@@ -158,6 +164,22 @@ export default function Header() {
           </GradientButton>
         )}
 
+          <Link
+  href="/sepet"
+  className="relative hover:text-pink-500 transition flex items-center"
+>
+  <ShoppingCartIcon className="w-6 h-6" />
+  {items.length > 0 && (
+    <span
+      className="absolute -top-2 -right-1 bg-pink-500 text-white text-xs font-semibold
+                 w-5 h-5 flex items-center justify-center rounded-full"
+    >
+      {items.length}
+    </span>
+  )}
+</Link>
+</div>
+
         {/* Mobil Menü butonu */}
         <button
           className="md:hidden ml-4 text-gray-700"
@@ -175,9 +197,18 @@ export default function Header() {
             {/* Kategori listesi vb. */}
             {user ? (
               <>
+              <Link
+  href="/cart"
+  className="flex items-center gap-2 hover:text-pink-500 transition"
+>
+  <ShoppingCartIcon className="w-5 h-5" />
+  Sepet ({items.length})
+</Link>
+
                 <Link href="/orders" className="hover:text-pink-500 transition">Siparişler</Link>
                 <Link href="/returns" className="hover:text-pink-500 transition">İadeler</Link>
                 <Link href="/profile" className="hover:text-pink-500 transition">Profil Ayarları</Link>
+
                 <button
                   onClick={handleLogout}
                   className="mt-2 px-5 py-2 rounded-lg bg-gray-200 text-gray-700 hover:bg-gray-300 transition"

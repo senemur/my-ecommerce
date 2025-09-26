@@ -5,6 +5,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GradientButton from "@/components/GradientButton";
 import { useEffect, useState } from "react";
+import { useCart } from "@/context/CartContext";
 
 type Product = {
   id: number;
@@ -15,6 +16,7 @@ type Product = {
 
 export default function ModaPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const { addToCart } = useCart();
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
   const [minPrice, setMinPrice] = useState<number | "">("");
@@ -107,7 +109,7 @@ export default function ModaPage() {
                 />
                 <h3 className="font-semibold text-lg">{product.name}</h3>
                 <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
-                <GradientButton className="mt-4">
+                <GradientButton onClick={() => addToCart(product.id)} className="mt-4">
                   Sepete Ekle
                 </GradientButton>
               </div>

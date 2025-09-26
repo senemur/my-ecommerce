@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ModalProvider } from "@/context/ModalContext";
+import { CartProvider } from "@/context/CartContext";
 import { Inter } from "next/font/google";
 import AuthModal from "@/components/AuthModal";
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
      <body className={inter.className}>
+      <CartProvider>
         <ModalProvider>
           {children}
-           <AuthModal /> 
+          <AuthModal /> 
         </ModalProvider>
+      </CartProvider>
       </body>
     </html>
   );
