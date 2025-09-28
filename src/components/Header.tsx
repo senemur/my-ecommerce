@@ -203,7 +203,7 @@ export default function Header() {
                         </div>
                         <button
                           onClick={() => removeFromCart(it.id)}
-                          className="text-xs text-red-500 hover:underline"
+                          className="text-xs text-black hover:underline"
                         >
                           Sil
                         </button>
@@ -214,12 +214,14 @@ export default function Header() {
                     <span>Toplam:</span>
                     <span>₺{total.toFixed(2)}</span>
                   </div>
+    
                   <Link
                     href="/sepet"
-                    className="block mt-4 w-full text-center bg-pink-200 text-white py-2 rounded-lg hover:bg-pink-300 transition"
+                    className="block mt-4 w-full text-center bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200 text-white py-2 rounded-lg hover:bg-gradient-to-l transition"
                   >
                     Sepete Git
                   </Link>
+                
                 </>
               )}
             </div>

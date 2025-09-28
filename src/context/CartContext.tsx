@@ -19,6 +19,7 @@ interface CartContextType {
   refresh: () => Promise<void>;
   addToCart: (productId: number) => Promise<void>;
   removeFromCart: (cartItemId: number) => Promise<void>;
+  decreaseQuantity: (cartItemId: number) => Promise<void>; //sepetteki ürünü artırma azaltma
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -62,13 +63,23 @@ export function CartProvider({ children }: { children: ReactNode }) {
     await refresh();
   };
 
+  const decreaseQuantity = async (cartItemId: number) => {
+    if (!uid) return;
+    await fetch(`http://localhost:4000/api/cart/${cartItemId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ delta: -1 }),
+    });
+    await refresh();
+  };
+
   // UID değiştikçe sepeti güncelle
   useEffect(() => {
     if (uid) refresh();
   }, [uid]);
 
   return (
-    <CartContext.Provider value={{ items, refresh, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ items, refresh, addToCart, removeFromCart, decreaseQuantity }}>
       {children}
     </CartContext.Provider>
   );
