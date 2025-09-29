@@ -1,4 +1,3 @@
-
 "use client";
 
 import Header from "@/components/Header";
@@ -6,7 +5,12 @@ import Footer from "@/components/Footer";
 import GradientButton from "@/components/GradientButton";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
+import { useFavorites } from "@/context/FavoritesContext";
 import Toast from "@/components/Toast";
+import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type Product = {
   id: number;
@@ -18,13 +22,14 @@ type Product = {
 export default function ModaPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const { addToCart } = useCart();
+  const { favorites, toggleFavorite } = useFavorites();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
   const [minPrice, setMinPrice] = useState<number | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
   const [toastVisible, setToastVisible] = useState(false);
 
-  // Backend’den verileri çek
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -40,26 +45,35 @@ export default function ModaPage() {
     fetchProducts();
   }, []);
 
-  // Fiyat filtresi
   const filtered = products.filter((p) => {
     const aboveMin = minPrice === "" || p.price >= minPrice;
     const belowMax = maxPrice === "" || p.price <= maxPrice;
     return aboveMin && belowMax;
   });
 
-  // Sıralama
   const sorted = [...filtered].sort((a, b) => {
     if (sortOrder === "price-asc") return a.price - b.price;
     if (sortOrder === "price-desc") return b.price - a.price;
     return 0;
   });
 
-  // Sepete ekle + bildirim
-  const handleAddToCart = (id: number) => {
-    addToCart(id);
-    console.log("tıklama", Date.now()); 
+const [toastMsg, setToastMsg] = useState("");
+const handleAddToCart = async (id: number) => {
+  try {
+    await addToCart(id);  // CartContext’ten gelen fonksiyon
+    setToastMsg("Ürün sepete eklendi!");
+  } catch (err: any) {
+    // CartContext zaten "Giriş yapılmamış" fırlatıyor
+    setToastMsg(err.message || "Bir hata oluştu");
+  } finally {
     setToastVisible(true);
-    setTimeout(() => setToastVisible(false), 3000); // 3 saniye sonra kaybolur
+    setTimeout(() => setToastVisible(false), 3000);
+  }
+};
+
+  const handleFavoriteClick = (product: Product) => {
+    toggleFavorite(product.id);
+    //router.push("/favoriler");
   };
 
   return (
@@ -69,7 +83,7 @@ export default function ModaPage() {
       <main className="max-w-[1600px] mx-auto px-4 py-10 bg-gray-50">
         <h1 className="text-3xl font-bold mb-6">Moda</h1>
 
-        {/* ---- Filtre & Sıralama ---- */}
+        {/* Filtre & Sıralama */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
             <input
@@ -100,40 +114,60 @@ export default function ModaPage() {
           </select>
         </div>
 
-        {/* ---- Ürün Grid ---- */}
+        {/* Ürün Grid */}
         {loading ? (
           <p className="text-gray-600">Yükleniyor…</p>
         ) : sorted.length === 0 ? (
           <p className="text-gray-600">Seçili aralıkta ürün bulunamadı.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {sorted.map((product) => (
-              <div
-                key={product.id}
-                className="bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col"
-              >
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="h-64 w-full object-cover rounded-md mb-4"
-                />
-                <h3 className="font-semibold text-lg">{product.name}</h3>
-                <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
-                <GradientButton onClick={() => handleAddToCart(product.id)} className="mt-4">
-                  Sepete Ekle
-                </GradientButton>
-              </div>
-            ))}
+            {sorted.map((product) => {
+              const isFav = favorites.some((f) => f.product.id === product.id);
+              return (
+                <div
+                  key={product.id}
+                  className="relative bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col"
+                >
+                  {/* Favori ikonu */}
+                  <button
+                    onClick={() => handleFavoriteClick(product)}
+                    className="absolute top-3 right-3 text-gray-400 hover:text-pink-500 transition"
+                    aria-label="Favorilere ekle"
+                  >
+                    {isFav ? (
+                      <HeartSolid className="w-6 h-6 text-pink-500" />
+                    ) : (
+                      <HeartOutline className="w-6 h-6" />
+                    )}
+                  </button>
+
+                  <Link href={`/moda/${product.id}`} className="flex flex-col flex-1">
+
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="h-64 w-full object-cover rounded-md mb-4"
+                  />
+                  <h3 className="font-semibold text-lg">{product.name}</h3>
+                  <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
+
+                  </Link>
+
+                  <GradientButton onClick={() => handleAddToCart(product.id)} className="mt-4">
+                    Sepete Ekle
+                  </GradientButton>
+                </div>
+              );
+            })}
           </div>
         )}
       </main>
-     
+
       <Footer />
 
-      
-      {/* Bildirim */}
       <Toast message="Ürün sepete eklendi!" show={toastVisible} />
-
+      <Toast message={toastMsg} show={toastVisible} />
     </>
   );
 }
+

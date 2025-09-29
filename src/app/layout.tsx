@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ModalProvider } from "@/context/ModalContext";
 import { CartProvider } from "@/context/CartContext";
+import { FavoritesProvider } from "@/context/FavoritesContext";
 import { Inter } from "next/font/google";
 import AuthModal from "@/components/AuthModal";
 
@@ -21,12 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en">
      <body className={inter.className}>
+      <FavoritesProvider>
       <CartProvider>
         <ModalProvider>
           {children}
           <AuthModal /> 
         </ModalProvider>
       </CartProvider>
+      </FavoritesProvider>
       </body>
     </html>
   );

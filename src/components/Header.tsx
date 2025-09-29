@@ -14,8 +14,16 @@ import GradientButton from "./GradientButton";
 import { auth } from "@/lib/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { useCart } from "@/context/CartContext";
+import { useRouter } from "next/navigation";
+
 
 export default function Header() {
+  const router = useRouter();
+  // const handleLogout = async () => {
+  //   await signOut(auth);
+  //   setProfileOpen(false);
+  //   router.push("/");        // 🟢 anasayfaya yönlendir
+  // };
   const { openModal } = useModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -32,6 +40,7 @@ export default function Header() {
   const handleLogout = async () => {
     await signOut(auth);
     setProfileOpen(false);
+    router.push("/");        //  anasayfaya yönlendir
   };
 
   const categories = [
@@ -86,7 +95,7 @@ export default function Header() {
           </div>
 
           <Link href="#" className="hover:text-pink-500 transition">Kampanyalar</Link>
-          <Link href="#" className="hover:text-pink-500 transition">Hakkımızda</Link>
+          <Link href="/#features" className="hover:text-pink-500 transition">Hakkımızda</Link>
         </nav>
 
         {/* Sağ taraf: Login / Profil ve Sepet */}
@@ -105,55 +114,101 @@ export default function Header() {
                 />
               </button>
 
-              {profileOpen && (
-                <div
-                  className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-lg 
-                             overflow-hidden z-50"
-                >
-                  <div className="px-4 py-3 border-b">
-                    <p className="text-sm text-gray-700 font-medium">
-                      {user.email}
-                    </p>
-                  </div>
-                  <ul className="py-1 text-gray-700">
-                    <li>
-                      <Link
-                        href="/orders"
-                        className="block px-4 py-2 hover:bg-gray-100 transition"
-                        onClick={() => setProfileOpen(false)}
-                      >
-                        Siparişler
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/returns"
-                        className="block px-4 py-2 hover:bg-gray-100 transition"
-                        onClick={() => setProfileOpen(false)}
-                      >
-                        İadeler
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/profile"
-                        className="block px-4 py-2 hover:bg-gray-100 transition"
-                        onClick={() => setProfileOpen(false)}
-                      >
-                        Profil Ayarları
-                      </Link>
-                    </li>
-                    <li>
-                      <button
-                        onClick={handleLogout}
-                        className="w-full text-left px-4 py-2 hover:bg-gray-100 transition"
-                      >
-                        Çıkış Yap
-                      </button>
-                    </li>
-                  </ul>
-                </div>
-              )}
+            {profileOpen && (
+  <div
+    className="absolute right-0 mt-3 w-80 h-80 bg-white rounded-2xl shadow-xl ring-1 ring-gray-100
+               animate-[fadeIn_0.15s_ease-out] z-50"
+  >
+    {/* Üst Kısım – Kullanıcı bilgisi */}
+    <div className="flex items-center gap-3 px-5 py-4 border-b">
+      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200
+                      flex items-center justify-center text-gray-700 font-bold">
+        {user.email?.[0]?.toUpperCase()}
+      </div>
+      <div className="flex-1">
+        <p className="text-sm font-semibold text-gray-800">{user.email}</p>
+        <p className="text-xs text-gray-500">Hesabım</p>
+      </div>
+    </div>
+
+    {/* Orta Kısım – İkonlu menü */}
+    <ul className="grid grid-cols-2 gap-1 px-2 py-3 text-gray-700 text-sm">
+      <li>
+        <Link
+          href="/orders"
+          onClick={() => setProfileOpen(false)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
+        >
+          <svg className="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M3 3h18v4H3V3zm0 6h18v4H3V9zm0 6h18v4H3v-4z"/>
+          </svg>
+          Siparişlerim
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/favoriler"
+          onClick={() => setProfileOpen(false)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
+        >
+          <svg className="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21.364 4.318 12.682a4.5 4.5 0 010-6.364z"/>
+          </svg>
+          Favoriler
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/returns"
+          onClick={() => setProfileOpen(false)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
+        >
+          <svg className="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M4 4v5h.582a9 9 0 018.546-8.546A9 9 0 0012 21a9 9 0 01-8-4.472"/>
+          </svg>
+          İadeler
+        </Link>
+      </li>
+      <li>
+        <Link
+          href="/profile"
+          onClick={() => setProfileOpen(false)}
+          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-50 transition"
+        >
+          <svg className="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+              d="M5.121 17.804A4 4 0 0112 15a4 4 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          Profil Ayarları
+        </Link>
+      </li>
+    </ul>
+
+    {/* Alt Kısım – Hızlı aksiyonlar */}
+    <div className="border-t px-4 py-3 space-y-2">
+      <Link
+        href="/account"
+        onClick={() => setProfileOpen(false)}
+        className="block w-full text-center rounded-lg border border-gray-200 py-2 text-gray-700 hover:bg-gray-50 transition"
+      >
+        Hesabım
+      </Link>
+      <button
+        onClick={handleLogout}
+        className="block w-full text-center rounded-lg bg-gradient-to-r from-pink-200 via-purple-200 to-blue-200
+                   text-white font-medium py-2 hover:opacity-90 transition"
+      >
+        Çıkış Yap
+      </button>
+    </div>
+  </div>
+)}
+
+
+
             </div>
           ) : (
             <GradientButton

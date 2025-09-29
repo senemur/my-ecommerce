@@ -4,6 +4,8 @@ import { useCart } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import GradientButton from "@/components/GradientButton";
+import ModaPage from "../moda/page";
+import { useRouter } from "next/navigation";
 
 function toNumber(val: any): number {
   if (val === null || val === undefined) return 0;
@@ -27,6 +29,7 @@ function toNumber(val: any): number {
 
 export default function SepetPage() {
   const { items, removeFromCart, addToCart, decreaseQuantity } = useCart();
+  const router = useRouter();
 
   const total = items.reduce((s, it) => s + toNumber(it.product.price) * it.quantity, 0);
 
@@ -111,7 +114,7 @@ export default function SepetPage() {
               </div>
 
               <div className="flex gap-3">
-                <button className="px-5 py-2 rounded-lg border hover:bg-gray-50">Alışverişe Devam Et</button>
+                <button  onClick={() => router.push("/moda")} className="px-5 py-2 rounded-lg border hover:bg-gray-50">Alışverişe Devam Et</button>
                 <GradientButton className="">
                   Ödemeye Geç
                 </GradientButton>

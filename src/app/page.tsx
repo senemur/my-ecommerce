@@ -16,7 +16,9 @@ export default function HomePage() {
       <main>
         <OnboardingHero />
         <HowItWorks />
+        <section id="features">
         <FeaturesGrid />
+      </section>
         <Testimonials />
         <CTASection />
       </main>
