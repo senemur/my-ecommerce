@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import GradientButton from "@/components/GradientButton";
 import { useEffect, useState } from "react";
 import { useCart } from "@/context/CartContext";
+import Toast from "@/components/Toast";
 
 type Product = {
   id: number;
@@ -21,6 +22,7 @@ export default function ModaPage() {
   const [sortOrder, setSortOrder] = useState<"default" | "price-asc" | "price-desc">("default");
   const [minPrice, setMinPrice] = useState<number | "">("");
   const [maxPrice, setMaxPrice] = useState<number | "">("");
+  const [toastVisible, setToastVisible] = useState(false);
 
   // Backend’den verileri çek
   useEffect(() => {
@@ -51,6 +53,14 @@ export default function ModaPage() {
     if (sortOrder === "price-desc") return b.price - a.price;
     return 0;
   });
+
+  // Sepete ekle + bildirim
+  const handleAddToCart = (id: number) => {
+    addToCart(id);
+    console.log("tıklama", Date.now()); 
+    setToastVisible(true);
+    setTimeout(() => setToastVisible(false), 3000); // 3 saniye sonra kaybolur
+  };
 
   return (
     <>
@@ -109,7 +119,7 @@ export default function ModaPage() {
                 />
                 <h3 className="font-semibold text-lg">{product.name}</h3>
                 <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
-                <GradientButton onClick={() => addToCart(product.id)} className="mt-4">
+                <GradientButton onClick={() => handleAddToCart(product.id)} className="mt-4">
                   Sepete Ekle
                 </GradientButton>
               </div>
@@ -117,7 +127,13 @@ export default function ModaPage() {
           </div>
         )}
       </main>
+     
       <Footer />
+
+      
+      {/* Bildirim */}
+      <Toast message="Ürün sepete eklendi!" show={toastVisible} />
+
     </>
   );
 }
