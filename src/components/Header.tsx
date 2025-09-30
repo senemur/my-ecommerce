@@ -19,11 +19,6 @@ import { useRouter } from "next/navigation";
 
 export default function Header() {
   const router = useRouter();
-  // const handleLogout = async () => {
-  //   await signOut(auth);
-  //   setProfileOpen(false);
-  //   router.push("/");        // 🟢 anasayfaya yönlendir
-  // };
   const { openModal } = useModal();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [user, setUser] = useState<any>(null);

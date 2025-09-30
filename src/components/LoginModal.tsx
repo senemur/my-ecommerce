@@ -3,6 +3,7 @@
 "use client";
 
 import { ReactNode, useEffect } from "react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,7 +12,7 @@ interface ModalProps {
 }
 
 export default function Modal({ isOpen, onClose, children }: ModalProps) {
-  // Escape ile kapatma
+  // ESC ile kapatma
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -23,27 +24,52 @@ export default function Modal({ isOpen, onClose, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
-      {/* Blur + koyu overlay */}
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center 
+                 animate-fadeIn"
+      aria-modal="true"
+      role="dialog"
+    >
+      {/* Overlay */}
       <div
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm
+                   transition-opacity duration-300"
         onClick={onClose}
       />
 
-      {/* Modal content */}
+      {/* İçerik kutusu */}
       <div
-        className="relative bg-white rounded-2xl shadow-2xl p-10 w-full max-w-2xl z-10 transform transition-all duration-300 animate-fadeIn"
+        className="relative bg-white  rounded-3xl shadow-2xl
+                   w-[90%] max-w-xl p-8 md:p-10 z-10
+                   transform transition-all duration-300
+                   animate-scaleIn"
       >
-        {/* Close button */}
+        {/* Kapatma butonu */}
         <button
           onClick={onClose}
-          className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition"
+          aria-label="Kapat"
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700
+                     dark:hover:text-gray-300 transition-colors"
         >
-          ✕
+          <XMarkIcon className="h-6 w-6" />
         </button>
 
         {children}
       </div>
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        @keyframes scaleIn {
+          0%   { transform: scale(0.95); opacity: 0; }
+          100% { transform: scale(1);    opacity: 1; }
+        }
+        .animate-fadeIn { animation: fadeIn 0.25s ease-out; }
+        .animate-scaleIn { animation: scaleIn 0.25s ease-out; }
+      `}</style>
     </div>
   );
 }
+

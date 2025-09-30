@@ -3,6 +3,7 @@
 import { useFavorites } from "@/context/FavoritesContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import Link from "next/link";
 
 export default function FavorilerPage() {
   const { favorites } = useFavorites();
@@ -18,7 +19,11 @@ export default function FavorilerPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {favorites.map((f) => (
-              <div key={f.id} className="bg-white p-4 rounded-lg shadow">
+              <Link
+                key={f.id}
+                href={`/moda/${f.product.id}`}
+                className="block bg-white p-4 rounded-lg shadow hover:shadow-lg transition"
+              >
                 <img
                   src={f.product.image ?? "/placeholder.jpg"}
                   alt={f.product.name}
@@ -28,7 +33,7 @@ export default function FavorilerPage() {
                 <p className="text-pink-600 font-bold mt-1">
                   ₺{Number(f.product.price)}
                 </p>
-              </div>
+              </Link>
             ))}
           </div>
         )}
