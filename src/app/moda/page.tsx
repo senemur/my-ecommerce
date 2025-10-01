@@ -11,6 +11,7 @@ import { HeartIcon as HeartOutline } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolid } from "@heroicons/react/24/solid";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getAuth } from "firebase/auth";
 
 type Product = {
   id: number;
@@ -71,10 +72,40 @@ const handleAddToCart = async (id: number) => {
   }
 };
 
-  const handleFavoriteClick = (product: Product) => {
+const handleFavoriteClick = async (product: Product) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+    alert("Önce giriş yapmalısınız!");
+    return;
+  }
+
+  const uid = user.uid;
+
+  try {
+    const res = await fetch("http://localhost:4000/api/favorites", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        userId: uid,
+        productId: product.id,
+      }),
+    });
+
+    if (!res.ok) throw new Error("Favori eklenemedi");
+
+    const data = await res.json();
+    console.log("Favori kaydedildi:", data);
+
+    // frontend context'i de güncelle
     toggleFavorite(product.id);
-    //router.push("/favoriler");
-  };
+
+  } catch (err) {
+    console.error(err);
+    alert("Favori eklenemedi.");
+  }
+};
 
   return (
     <>
@@ -122,7 +153,7 @@ const handleAddToCart = async (id: number) => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {sorted.map((product) => {
-              const isFav = favorites.some((f) => f.product.id === product.id);
+              const isFav = favorites.some((f) => f.product && f.product.id === product.id);
               return (
                 <div
                   key={product.id}

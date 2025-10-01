@@ -48,7 +48,7 @@ export const FavoritesProvider = ({ children }: { children: React.ReactNode }) =
     }
 
     // Favori varsa sil
-    const exists = favorites.find((f) => f.product.id === productId);
+    const exists = favorites.find((f) => f.product && f.product.id === productId);
     if (exists) {
       await fetch(`${BACKEND_URL}/api/favorites/${exists.id}`, { method: "DELETE" });
       setFavorites((prev) => prev.filter((f) => f.id !== exists.id));
