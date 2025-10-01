@@ -16,6 +16,7 @@ import { getAuth } from "firebase/auth";
 type Product = {
   id: number;
   name: string;
+  description?: string;
   price: number;
   image: string;
 };
@@ -156,38 +157,57 @@ const handleFavoriteClick = async (product: Product) => {
               const isFav = favorites.some((f) => f.product && f.product.id === product.id);
               return (
                 <div
-                  key={product.id}
-                  className="relative bg-white rounded-xl shadow hover:shadow-lg transition p-4 flex flex-col"
-                >
-                  {/* Favori ikonu */}
-                  <button
-                    onClick={() => handleFavoriteClick(product)}
-                    className="absolute top-3 right-3 text-gray-400 hover:text-pink-500 transition"
-                    aria-label="Favorilere ekle"
-                  >
-                    {isFav ? (
-                      <HeartSolid className="w-6 h-6 text-pink-500" />
-                    ) : (
-                      <HeartOutline className="w-6 h-6" />
-                    )}
-                  </button>
+  key={product.id}
+  className="relative bg-white rounded-xl shadow hover:shadow-lg transition flex flex-col"
+>
+  {/* Favori ikonu */}
+  <button
+    onClick={() => handleFavoriteClick(product)}
+    className="absolute top-3 right-3 text-gray-400 hover:text-pink-500 transition"
+    aria-label="Favorilere ekle"
+  >
+    {isFav ? (
+      <HeartSolid className="w-6 h-6 text-pink-500" />
+    ) : (
+      <HeartOutline className="w-6 h-6" />
+    )}
+  </button>
 
-                  <Link href={`/moda/${product.id}`} className="flex flex-col flex-1">
+  <Link href={`/moda/${product.id}`} className="flex flex-col flex-1">
+    {/* Resim - kenarlarda boşluk yok */}
+    <img
+      src={product.image}
+      alt={product.name}
+      className="h-64 w-full object-cover rounded-t-xl"
+    />
 
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-64 w-full object-cover rounded-md mb-4"
-                  />
-                  <h3 className="font-semibold text-lg">{product.name}</h3>
-                  <p className="text-pink-600 font-bold mt-2">₺{product.price}</p>
+    <div className="p-4 flex flex-col flex-1">
+      <h3 className="font-semibold text-lg">{product.name}</h3>
+      {/* 2 satır açıklama */}
+      <p className="text-gray-500 text-sm line-clamp-2 mt-1">
+        {product.description || "Açıklama yok"}
+      </p>
+      <p className="text-gray-500 text-sm line-clamp-2 mt-1">
+        {product.description || "Açıklama yok"}
+      </p>
 
-                  </Link>
+      <div className="flex items-center justify-between mt-4">
+          {/* Fiyat sağda */}
+        <span className="text-pink-600 font-bold text-lg">₺{product.price}</span>
+        {/* Sepete ekle butonu küçük ve solda */}
+        <GradientButton
+          onClick={() => handleAddToCart(product.id)}
+          className="text-sm px-3 py-2"
+        >
+          Sepete Ekle
+        </GradientButton>
 
-                  <GradientButton onClick={() => handleAddToCart(product.id)} className="mt-4">
-                    Sepete Ekle
-                  </GradientButton>
-                </div>
+      
+      </div>
+    </div>
+  </Link>
+</div>
+
               );
             })}
           </div>
